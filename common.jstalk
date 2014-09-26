@@ -1,0 +1,6 @@
+// Sandbox
+function in_sandbox() {
+  var env = [[NSProcessInfo processInfo] environment];
+  return (nil != [env objectForKey:@"APP_SANDBOX_CONTAINER_ID"]);
+}
+
