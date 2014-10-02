@@ -1,147 +1,59 @@
-// Sketch Plugin: Generate ICNS Automatically (shift command a)
-// Source: github.com/NathanRutzky/Generate-ICNS
-// Version: 1.0.5
+// Sketch Plugin: Export to ICNS From Slice (shift command a)
+// Source: https://github.com/solicomo/export-to-icns
+// Version: 0.1.0
+// Author: Soli
+
+#import 'common.jst'
 
 (function() {
+	var iconPath = save_path()
+	var tmpPath  = NSTemporaryDirectory()
+	var guid     = [[NSProcessInfo processInfo] globallyUniqueString]
+	var iconsetPath = [tmpPath stringByAppendingPathComponent: guid + @".iconset"]
+	var pngPath     = [tmpPath stringByAppendingPathComponent: guid + @".png"]
+	var fileManager = [NSFileManager defaultManager]
 
-    var artboard = [[[doc currentPage] artboards] firstObject]
+	[fileManager createDirectoryAtPath:iconsetPath withIntermediateDirectories:true attributes:nil error:nil]
 
-    if (![doc fileURL] || !artboard) {
-    
-        var error = [[NSTask alloc] init]
-        
-        [error setLaunchPath:"/bin/bash"]
-        [error setArguments:["-c", "afplay /System/Library/Sounds/Basso.aiff"]]
-        [error launch]
-        [doc showMessage:"Create a 1024x1024 artboard, then Save the document..."]
-    }
+	var slice = [[[doc currentPage] artboards] firstObject]
+	if (!slice) {
+		slice = [[[doc currentPage] exportableLayers] firstObject]
+	}
 
-    else {
-    
-        var setting = [[NSProcessInfo processInfo] environment],
-            sandbox = (nil != [setting objectForKey:@"APP_SANDBOX_CONTAINER_ID"]),
-            filePath = [[doc fileURL] path].split([doc displayName])[0],
-            fileName = ".icon.iconset/" + ".icon_XYZ" + ".png",
-            fileFolder = filePath + fileName
-            
-        if (sandbox) {
-        
-            var userHome = "/Users/" + NSUserName(),
-                userPath = [[[NSURL fileURLWithPath:userHome] URLByStandardizingPath] URLByResolvingSymlinksInPath],
-                bookmark = [[NSUserDefaults standardUserDefaults] objectForKey:userHome]
-                
-            if (!bookmark) {
-            
-                var openPanel = [NSOpenPanel openPanel]
-                
-                [openPanel setTitle:"Sketch Authorization"]
-                [openPanel setMessage:"Sketch.app needs permission to write to this directory."]
-                [openPanel setPrompt:"Authorize"]
-                [openPanel setCanChooseFiles:false]
-                [openPanel setCanChooseDirectories:true]
-                [openPanel setDirectoryURL:userPath]
-                
-                if ([openPanel runModal] == NSOKButton) {
-                
-                    bookmarkURL = [openPanel URL]
-                    
-                } else return false
-        
-                bookmark = [userPath bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
-                            includingResourceValuesForKeys:nil
-                            relativeToURL:nil
-                            error:nil]
-                            
-                [[NSUserDefaults standardUserDefaults] setObject:bookmark forKey:userHome]
-                [[NSUserDefaults standardUserDefaults] synchronize]
-            }
-            
-            var bookmarkURL = [NSURL URLByResolvingBookmarkData:bookmark
-                options:NSURLBookmarkResolutionWithSecurityScope
-                relativeToURL:nil
-                bookmarkDataIsStale:nil
-                error:nil]
-                
-            if (bookmarkURL)
-            
-               [doc saveArtboardOrSlice:artboard toFile:fileFolder]
-        } else [doc saveArtboardOrSlice:artboard toFile:fileFolder]
-                
-        var convert_0 = [[NSTask alloc] init],
-            convert_1 = [[NSTask alloc] init],
-            convert_2 = [[NSTask alloc] init],
-            convert_3 = [[NSTask alloc] init],
-            convert_4 = [[NSTask alloc] init],
-            convert_5 = [[NSTask alloc] init],
-            convert_6 = [[NSTask alloc] init],
-            convert_7 = [[NSTask alloc] init],
-            convert_8 = [[NSTask alloc] init],
-            convert_9 = [[NSTask alloc] init]
-        
-        var a = "find ~/ -name '.icon_XYZ.png' -execdir sips -z 16 16 {} -o icon_16x16.png \\;",
-            b = "find ~/ -name '.icon_XYZ.png' -execdir sips -z 32 32 {} -o icon_16x16@2x.png \\;",
-            c = "find ~/ -name '.icon_XYZ.png' -execdir sips -z 32 32 {} -o icon_32x32.png \\;",
-            d = "find ~/ -name '.icon_XYZ.png' -execdir sips -z 64 64 {} -o icon_32x32@2x.png \\;",
-            e = "find ~/ -name '.icon_XYZ.png' -execdir sips -z 128 128 {} -o icon_128x128.png \\;",
-            f = "find ~/ -name '.icon_XYZ.png' -execdir sips -z 256 256 {} -o icon_128x128@2x.png \\;",
-            g = "find ~/ -name '.icon_XYZ.png' -execdir sips -z 256 256 {} -o icon_256x256.png \\;",
-            h = "find ~/ -name '.icon_XYZ.png' -execdir sips -z 512 512 {} -o icon_256x256@2x.png \\;",
-            i = "find ~/ -name '.icon_XYZ.png' -execdir sips -z 512 512 {} -o icon_512x512.png \\;",
-            j = "find ~/ -name '.icon_XYZ.png' -execdir sips -z 1024 1024 {} -o icon_512x512@2x.png \\;"
-        
-            [convert_0 setLaunchPath:"/bin/bash"]
-            [convert_1 setLaunchPath:"/bin/bash"]
-            [convert_2 setLaunchPath:"/bin/bash"]
-            [convert_3 setLaunchPath:"/bin/bash"]
-            [convert_4 setLaunchPath:"/bin/bash"]
-            [convert_5 setLaunchPath:"/bin/bash"]
-            [convert_6 setLaunchPath:"/bin/bash"]
-            [convert_7 setLaunchPath:"/bin/bash"]
-            [convert_8 setLaunchPath:"/bin/bash"]
-            [convert_9 setLaunchPath:"/bin/bash"]
-        
-            [convert_0 setArguments:["-c", a]]
-            [convert_1 setArguments:["-c", b]]
-            [convert_2 setArguments:["-c", c]]
-            [convert_3 setArguments:["-c", d]]
-            [convert_4 setArguments:["-c", e]]
-            [convert_5 setArguments:["-c", f]]
-            [convert_6 setArguments:["-c", g]]
-            [convert_7 setArguments:["-c", h]]
-            [convert_8 setArguments:["-c", i]]
-            [convert_9 setArguments:["-c", j]]
-        
-            [convert_0 launch]
-            [convert_1 launch]
-            [convert_2 launch]
-            [convert_3 launch]
-            [convert_4 launch]
-            [convert_5 launch]
-            [convert_6 launch]
-            [convert_7 launch]
-            [convert_8 launch]
-            [convert_9 launch]
-            [convert_9 waitUntilExit]
-        
-        var createIcon = [[NSTask alloc] init],
-            removeIcon = [[NSTask alloc] init],
-            createPath = "find ~/ -name '.icon.iconset' -execdir iconutil -c icns {} -o ~/Icon.icns \\;",
-            removePath = "find ~/ -name '.icon.iconset' -exec rm -r {} \\;",
-            success = [[NSTask alloc] init]
-        
-            [createIcon setLaunchPath:"/bin/bash"]
-            [createIcon setArguments:["-c", createPath]]
-            [createIcon launch]
-            [createIcon waitUntilExit]
-                
-            [removeIcon setLaunchPath:"/bin/bash"]
-            [removeIcon setArguments:["-c", removePath]]
-            [removeIcon launch]
-            
-            [success setLaunchPath:"/bin/bash"]
-            [success setArguments:["-c", "afplay /System/Library/Sounds/Pop.aiff"]]
-            [success launch]
-            [doc showMessage:"Icon Complete..."]
-    }
-    
+	if (!slice) {
+		[doc showMessage:"Failed: No artboard or slice found."]
+		return false
+	}
+
+	[doc saveArtboardOrSlice:slice toFile:pngPath]
+
+	var pngSizes = [NSDictionary dictionaryWithObjectsAndKeys:
+			@" 16 16 ",     @"icon_16x16.png",
+			@" 32 32 ",     @"icon_16x16@2x.png",
+			@" 32 32 ",     @"icon_32x32.png",
+			@" 64 64 ",     @"icon_32x32@2x.png",
+			@" 128 128 ",   @"icon_128x128.png",
+			@" 256 256 ",   @"icon_128x128@2x.png",
+			@" 256 256 ",   @"icon_256x256.png",
+			@" 512 512 ",   @"icon_256x256@2x.png",
+			@" 512 512 ",   @"icon_512x512.png",
+			@" 1024 1024 ", @"icon_512x512@2x.png",
+			nil]
+	var enumerator = [pngSizes keyEnumerator]
+	var png = nil
+
+	while (png = [enumerator nextObject]) {
+		var convertTask = [[NSTask alloc] init]
+		var convertCmd  = "sips -z" + [pngSizes valueForKey:png] + pngPath + " -o " + [iconsetPath stringByAppendingPathComponent:png]
+
+		[convertTask setLaunchPath:"/bin/bash"]
+		[convertTask setArguments:["-c", convertCmd]]
+		[convertTask launch]
+		[convertTask waitUntilExit]
+	}
+
+	convert_iconset_to_icns(iconsetPath, iconPath)
+	[fileManager removeItemAtPath:iconsetPath error:nil]
+	[fileManager removeItemAtPath:pngPath error:nil]
+
 })();

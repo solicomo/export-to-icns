@@ -22,8 +22,18 @@ Usage
 
 ### Export From Artboards
 
+1. Create artboards by going to `File › New From Template › Mac App Icon` in the menu.
+2. Design your icon on these artboards.
+3. Choose `Plugins › Export to ICNS › From Artboards`.
+
+>Note: You should not rename the artboards. You can prevent individual artboards from exporting by appending `Lock` to the name.
+
 ### Export From Slice
 
+1. Design your icon on a single artboard.
+2. Choose `Plugins › Export to ICNS › From Slice`.
+
+>Note: The artboard should not be smaller than 1024x1024, or the hi-res icons will appear blurry.
 
 Feedback
 --------
