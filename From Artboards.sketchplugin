@@ -1,0 +1,61 @@
+// Sketch Plugin: Export to ICNS From Artboards (option command a)
+// Source: https://github.com/solicomo/export-to-icns
+// Version: 0.1.0
+
+(function() {
+
+	var curPath = [doc fileURL] ? [[[doc fileURL] path] stringByDeletingLastPathComponent] : @"~"
+	var curName = [[doc displayName] stringByDeletingPathExtension]
+	var savePanel = [NSSavePanel savePanel]
+
+	[savePanel setTitle:@"Export"]
+	[savePanel setNameFieldLabel:@"Export To:"]
+	[savePanel setPrompt:@"Export"]
+	[savePanel setAllowedFileTypes: [NSArray arrayWithObject:@"icns"]]
+	[savePanel setAllowsOtherFileTypes:false]
+	[savePanel setCanCreateDirectories:true]
+	[savePanel setDirectoryURL:[NSURL fileURLWithPath:curPath]]
+	[savePanel setNameFieldStringValue:curName]
+
+	if ([savePanel runModal] != NSOKButton) {
+		return false
+	}
+
+	var iconPath = [[savePanel URL] path],
+		tmpPath  = NSTemporaryDirectory(),
+		guid     = [[NSProcessInfo processInfo] globallyUniqueString],
+		iconsetPath = [tmpPath stringByAppendingPathComponent: guid + @".iconset"]
+
+	var artboardCount = [[[doc currentPage] artboards] count]
+	for (var i=0; i < artboardCount; i++) {
+
+		var artboard = [[[doc currentPage] artboards] objectAtIndex:i],
+			artboardName = [artboard name]
+
+		if (artboardName == "Lock") {
+			continue
+		}
+
+		var fileName = [iconsetPath stringByAppendingPathComponent: artboardName + ".png"]
+
+		[doc saveArtboardOrSlice:artboard toFile:fileName]
+	}
+
+	var createTask = [[NSTask alloc] init],
+		fileManager= [NSFileManager defaultManager],
+		createCmd  = "iconutil -c icns " + iconsetPath + " -o " + iconPath
+
+	[createTask setLaunchPath:@"/bin/bash"]
+	[createTask setArguments:["-c", createCmd]]
+	[createTask launch]
+	[createTask waitUntilExit]
+	[fileManager removeItemAtPath:iconsetPath error:nil]
+
+	if ([createTask terminationStatus] == 0) {
+		[doc showMessage:@"Done"]
+		log(@"Done")
+	} else {
+		[doc showMessage:@"Failed:" + [createTask terminationReason]]
+		log(@"Failed:" + [createTask terminationReason])
+	}
+})();
