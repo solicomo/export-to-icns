@@ -30,8 +30,10 @@ Usage
 
 ### Export From Slice
 
-1. Design your icon on a single artboard.
-2. Choose `Plugins › Export to ICNS › From Slice`.
+1. Design your icon(s);
+2. Create a slice if you do not want to export the entire artboard;
+3. Select the slice or artboard you want to export;
+4. Choose `Plugins › Export to ICNS › From Slice`.
 
 >Note: The artboard should not be smaller than 1024x1024, or the hi-res icons will appear blurry.
 
