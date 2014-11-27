@@ -26,7 +26,7 @@ function save_path() {
 
 function convert_iconset_to_icns(iconsetPath, iconPath) {
 	var createTask = [[NSTask alloc] init]
-	var createCmd  = "iconutil -c icns " + iconsetPath + " -o " + iconPath
+	var createCmd  = "iconutil -c icns \"" + iconsetPath + "\" -o \"" + iconPath + "\""
 
 	[createTask setLaunchPath:@"/bin/bash"]
 	[createTask setArguments:["-c", createCmd]]
