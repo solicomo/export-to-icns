@@ -15,13 +15,27 @@
 
 	[fileManager createDirectoryAtPath:iconsetPath withIntermediateDirectories:true attributes:nil error:nil]
 
-	var slice = [[[doc currentPage] artboards] firstObject]
-	if (!slice) {
-		slice = [[[doc currentPage] exportableLayers] firstObject]
+	var slices = [[doc currentPage] exportableLayers]
+
+	if (!slices || [slices count] < 1) {
+		[doc showMessage:"Failed: No exportable layer found."]
+		return false
+	}
+
+	var slice = [slices firstObject]
+	var sliceCount = [slices count]
+
+	for (var i=0; i < sliceCount; i++) {
+		var s = [slices objectAtIndex:i]
+
+		if ([s isSelected]) {
+			slice = s
+			break
+		}
 	}
 
 	if (!slice) {
-		[doc showMessage:"Failed: No artboard or slice found."]
+		[doc showMessage:"Failed: No slice found."]
 		return false
 	}
 

@@ -20,8 +20,9 @@
 		return false
 	}
 
+	var artboards = [[doc currentPage] artboards]
 	for (var i=0; i < artboardCount; i++) {
-		var artboard = [[[doc currentPage] artboards] objectAtIndex:i]
+		var artboard = [artboards objectAtIndex:i]
 		var artboardName = [artboard name]
 		var fileName = [iconsetPath stringByAppendingPathComponent: artboardName + ".png"]
 
