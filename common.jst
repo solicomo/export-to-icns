@@ -1,6 +1,6 @@
 // Sketch Plugin: Export to ICNS
 // Source: https://github.com/solicomo/export-to-icns
-// Version: 0.1.0
+// Version: 0.1.1
 // Author: Soli
 
 function save_path() {
@@ -25,9 +25,8 @@ function save_path() {
 }
 
 function convert_iconset_to_icns(iconsetPath, iconPath) {
-	var createTask = [[NSTask alloc] init]
 	var createCmd  = "iconutil -c icns \"" + iconsetPath + "\" -o \"" + iconPath + "\""
-
+	var createTask = [[NSTask alloc] init]
 	[createTask setLaunchPath:@"/bin/bash"]
 	[createTask setArguments:["-c", createCmd]]
 	[createTask launch]

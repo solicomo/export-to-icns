@@ -1,9 +1,9 @@
 // Sketch Plugin: Export to ICNS From Slice (shift command a)
 // Source: https://github.com/solicomo/export-to-icns
-// Version: 0.1.0
+// Version: 0.1.1
 // Author: Soli
 
-#import 'common.jst'
+@import 'common.jst'
 
 (function() {
 	var iconPath = save_path()
